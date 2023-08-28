@@ -52,22 +52,22 @@ void LCD_vidInit(void)
     };
 
     /*Initialize KeyPad Pins */
-    GPIO_Init(Config, 7);
+    GPIO_Init(Config, 7U);
 
-    delay_ms(40);
+    delay_ms(40U);
     CLR_BIT(GPIO_Arr[LCD_DATA_PORT]->DATA[4],LCD_RW);
 
-    LCD_vidSendNibbleCMD(0x2); /*2 Line, 5*7 matrix in 4-bit mode*/
-    LCD_vidSendNibbleCMD(0x8);
+    LCD_vidSendNibbleCMD(0x2U); /*2 Line, 5*7 matrix in 4-bit mode*/
+    LCD_vidSendNibbleCMD(0x8U);
 
-    LCD_vidSendNibbleCMD(0x0); /*Display on cursor off*/
-    LCD_vidSendNibbleCMD(0xC); /*Increment cursor */
+    LCD_vidSendNibbleCMD(0x0U); /*Display on cursor off*/
+    LCD_vidSendNibbleCMD(0xCU); /*Increment cursor */
 
-    LCD_vidSendNibbleCMD(0x0);
-    LCD_vidSendNibbleCMD(0x6);
+    LCD_vidSendNibbleCMD(0x0U);
+    LCD_vidSendNibbleCMD(0x6U);
 
-    LCD_vidSendNibbleCMD(0x0);/*clear the lcd*/
-    LCD_vidSendNibbleCMD(0x1);
+    LCD_vidSendNibbleCMD(0x0U);/*clear the lcd*/
+    LCD_vidSendNibbleCMD(0x1U);
 }
 
 /***************************************************************************************************************************
@@ -86,8 +86,8 @@ void LCD_vidSendNibbleCMD(u8 u8NibbleCopy)
     CLR_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[8],LCD_RS);
     SET_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[2],LCD_EN);
     /*send the nibble to the LCD through data pins*/
-    INSERT_VALUE(GPIO_Arr[LCD_DATA_PORT]->DATA[15],0,4,u8NibbleCopy);
-    delay_ms(1);
+    INSERT_VALUE(GPIO_Arr[LCD_DATA_PORT]->DATA[15],0U,4U,u8NibbleCopy);
+    delay_ms(1U);
 
     CLR_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[2],LCD_EN);
 }
@@ -108,8 +108,8 @@ void LCD_vidSendNibbleData(u8 u8NibbleCopy)
     SET_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[8],LCD_RS);
     SET_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[2],LCD_EN);
     /*send the nibble to the LCD through data pins*/
-    INSERT_VALUE(GPIO_Arr[LCD_DATA_PORT]->DATA[15],0,4,u8NibbleCopy);
-    delay_ms(1);
+    INSERT_VALUE(GPIO_Arr[LCD_DATA_PORT]->DATA[15],0U,4U,u8NibbleCopy);
+    delay_ms(1U);
 
     CLR_BIT(GPIO_Arr[LCD_CONTROL_PORT]->DATA[2],LCD_EN);
 
@@ -125,7 +125,7 @@ void LCD_vidSendNibbleData(u8 u8NibbleCopy)
 void LCD_vidWriteChar (u8 u8DataCopy)
 {
     /*store the last 4 bits of the character*/
-    u8 upper=u8DataCopy>>4;
+    u8 upper=u8DataCopy>>4U;
     /*send the last 4bits*/
     LCD_vidSendNibbleData(upper);
     /*send the first 4bits*/
@@ -148,7 +148,7 @@ void LCD_vidWriteString (u8* pu8StringCopy)
 {
     u8 i;
     /*loop into string till reach null*/
-    for(i=0;pu8StringCopy[i];i++)
+    for(i=0U;pu8StringCopy[i];i++)
     {
         /*print the each single character individually*/
         LCD_vidWriteChar(pu8StringCopy[i]);
@@ -168,20 +168,22 @@ void LCD_move_cusor(u8 colu,u8 row){
     /*initialize a variable to store the position*/
     u8 local_positon ;
     /*check if the column is the first column*/
-    if(colu==0){
+    if(colu==0U){
         /*add the row number to the address of the first row in the first column*/
         local_positon=0x80+row;
         /*check if the column is the second column*/
-    }else if(colu==1){
+    }else if(colu==1U){
         /*add the row number to the address of the first row in the second column*/
         local_positon=row+0xC0;
     }
+    else
+    {
+
+    }
     /*send the position of the cursor*/
-    LCD_vidSendNibbleCMD(local_positon>>4);
+    LCD_vidSendNibbleCMD(local_positon>>4U);
     LCD_vidSendNibbleCMD(local_positon);
-    delay_ms(5);
-
-
+    delay_ms(5U);
 }
 
 /***************************************************************************************************************************
@@ -192,9 +194,9 @@ void LCD_move_cusor(u8 colu,u8 row){
  * \Return value:   : None
  ***************************************************************************************************************************/
 void LCD_clear(void){
-    LCD_vidSendNibbleCMD(0x0);
-    LCD_vidSendNibbleCMD(0x1);
-    counter=0;
+    LCD_vidSendNibbleCMD(0x0U);
+    LCD_vidSendNibbleCMD(0x1U);
+    counter=0U;
 }
 
 /***************************************************************************************************************************
@@ -207,22 +209,22 @@ void LCD_clear(void){
 void LCD_vidWriteNumber (u16 num ){
 
     u8 arr[5]={0};
-    u8 i=5;
-    if(num & 0x8000)
+    u8 iterator=5U;
+    if(num & 0x8000U)
     {
-        num = ((~num) +1);
-        LCD_vidWriteChar('-');
+        num = ((~num) +1U);
+        LCD_vidWriteChar((u8)'-');
     }
-    if(num==0){
-        LCD_vidWriteChar('0');
+    if(num==0U){
+        LCD_vidWriteChar((u8)'0');
     }else{
-        while(num!=0){
-            i--;
-            arr[i]=num%10;
-            num=num/10;
+        while(num!=0U){
+            iterator--;
+            arr[iterator]=(u8)(num%10);
+            num=(u8)(num/10);
         }
-        for(;i<5;i++){
-            LCD_vidWriteChar(arr[i]+'0');
+        for(iterator=iterator;iterator<5;iterator++){
+            LCD_vidWriteChar(arr[iterator]+(u8)'0');
         }
     }
 
